@@ -1,0 +1,1 @@
+The beauty in monte carlo pricing methodology is the ability to develop exotic products for clients that precisely suit their needs.
