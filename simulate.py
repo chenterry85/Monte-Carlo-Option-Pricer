@@ -9,7 +9,7 @@ parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument("-i", "--initial_price", default=100, type=float, help="Initial price of an asset")
 parser.add_argument("-d", "--drift", default=0.08, type=float, help="The drift or expected annual return")
 parser.add_argument("-v", "--volatility", default=0.3, type=float, help="The volatility/spread of an asset")
-parser.add_argument("-p", "--paths", default=10000, type=int, help="The desired number of generated paths")
+parser.add_argument("-p", "--paths", default=100, type=int, help="The desired number of generated paths")
 args = vars(parser.parse_args())
 
 # Set parameters
@@ -21,28 +21,38 @@ risk_free_rate = 0.02
 tte = 2 # time to expiry in years
 interval = 1 / 365 # set interval to one day
 
-# Initialize each path
-stochastic_processes = []
-for _ in range(n):
-  stochastic_processes.append( GBM(initial_price,drift,interval,volatility) )
+# Initialize each process
+def init_processes():
+  stochastic_processes = []
+  for _ in range(n):
+    stochastic_processes.append( GBM(initial_price,drift,interval,volatility) )
+  return stochastic_processes
   
 # Simulate each stochastic process
-for process in stochastic_processes:
-  duration = tte
-  while duration - process.dt > 0:
-    process.time_step()
-    duration -= process.dt
+def simulate_processes(stochastic_processes):
+  for process in stochastic_processes:
+    duration = tte
+    while duration - process.dt > 0:
+      process.time_step()
+      duration -= process.dt
+      
+  return stochastic_processes
     
-# Graphing
-# for process in stochastic_processes:
-#   x = np.arange(len(process.asset_prices))
-#   y = process.asset_prices
-#   plt.plot(x,y)
+# plot generated paths
+def plot_paths(stochastic_processes):
+  for process in stochastic_processes:
+    x = np.arange(len(process.asset_prices))
+    y = process.asset_prices
+    plt.plot(x,y)
 
-# plt.title(f'{n} Price Paths : $\mu={drift},\ \sigma={volatility}$')
-# plt.xlabel('Days')
-# plt.ylabel('Price')
-# plt.show()
+  plt.title(f'{n} Price Paths : $\mu={drift},\ \sigma={volatility}$')
+  plt.xlabel('Days')
+  plt.ylabel('Price')
+  plt.show()
+
+stochastic_processes = init_processes()
+stochastic_processes = simulate_processes(stochastic_processes)
+#plot_paths(stochastic_processes)
 
 payoff_model = UpAndOutBarrierPayoff(100,120)
 call_payoffs = []
