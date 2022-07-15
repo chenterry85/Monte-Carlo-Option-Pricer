@@ -27,7 +27,7 @@ class UpAndOutBarrierPayoff:
   
   def __init__(self, strike_price, barrier_price_level):
     self.strike_price = strike_price
-    self.barrier_price_cap = barrier_price_level
+    self.barrier_price_level = barrier_price_level
     self.barrier_exercised = False
     
   def check_barrier(self, stock_price):
@@ -42,6 +42,9 @@ class UpAndOutBarrierPayoff:
       return stock_price - self.strike_price
     
     return 0
+
+  def reset(self):
+    self.barrier_exercised = False
   
 # Down and out Barrier Option
 class DownAndOutBarrierPayoff:
@@ -49,13 +52,20 @@ class DownAndOutBarrierPayoff:
   def __init__(self, strike_price, barrier_price_level):
     self.strike_price = strike_price
     self.barrier_price_level = barrier_price_level
+    self.barrier_exercised = False
   
   def check_barrier(self, stock_price):
     if stock_price < self.barrier_price_level:
       self.barrier_exercised = True
   
   def get_payoff(self, stock_price):
+    if self.barrier_exercised:
+      return 0
+    
     if stock_price < self.strike_price:
       return self.strike_price - stock_price
 
     return 0
+  
+  def reset(self):
+    self.barrier_exercised = False
