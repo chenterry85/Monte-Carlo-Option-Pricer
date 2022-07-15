@@ -1,6 +1,6 @@
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from GBM import GBM
-from Payoff import CallPayoff, PutPayoff, UpAndOutBarrierPayoff, DownAndOutBarrierPayoff
+from Payoffs import CallPayoff, PutPayoff, UpAndOutBarrierPayoff, DownAndOutBarrierPayoff
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -44,7 +44,7 @@ for process in stochastic_processes:
 # plt.ylabel('Price')
 # plt.show()
 
-payoff_model = UpAndOutBarrierOption(100,120)
+payoff_model = UpAndOutBarrierPayoff(100,120)
 call_payoffs = []
 for i in range(n):
   end_price = stochastic_processes[i].asset_prices[-1]
